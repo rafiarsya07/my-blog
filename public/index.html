@@ -4,202 +4,852 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ThoughtLog — Rafi Arsya</title>
+<meta name="description" content="Notes on what I build and why — by Rafi Arsya." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Newsreader:ital,opsz@0,6..72;1,6..72&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --bg:#fbfaf7; --ink:#1c1d1a; --ink-soft:#55564f; --faint:#8a8b81;
-    --line:#e4e2d8; --accent:#1d4d44; --accent-soft:#e8efec; --paper:#fff;
-    --danger:#8a3324; --amber:#9a6a00; --radius:4px;
+    --bg:#fbfaf7; --bg-raised:#fff; --ink:#1c1d1a; --ink-soft:#55564f; --faint:#92938a;
+    --line:#e6e4d9; --line-soft:#efeee5; --accent:#1d4d44; --accent-bright:#246b5d;
+    --accent-soft:#e8efec; --paper:#fff; --danger:#a13a26; --danger-soft:#fbece7;
+    --amber:#9a6a00; --amber-soft:#fdf3df; --radius:6px; --radius-lg:10px;
+    --shadow-sm:0 1px 2px rgba(28,29,26,.04), 0 1px 1px rgba(28,29,26,.03);
+    --shadow-md:0 4px 16px rgba(28,29,26,.06), 0 1px 2px rgba(28,29,26,.04);
+    --shadow-lg:0 16px 48px rgba(28,29,26,.10), 0 2px 6px rgba(28,29,26,.05);
+    --ease:cubic-bezier(.16,1,.3,1);
   }
+  html[data-theme="dark"] {
+    --bg:#15161a; --bg-raised:#1c1e23; --ink:#e8e6e0; --ink-soft:#b0aea6; --faint:#6e6d68;
+    --line:#2c2e34; --line-soft:#24262b; --accent:#5fae9b; --accent-bright:#7cc4b1;
+    --accent-soft:#1d2d29; --paper:#1c1e23; --danger:#e2725a; --danger-soft:#2e1d18;
+    --amber:#d9a440; --amber-soft:#2c2415;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.3), 0 1px 1px rgba(0,0,0,.2);
+    --shadow-md:0 4px 16px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3);
+    --shadow-lg:0 16px 48px rgba(0,0,0,.5), 0 2px 6px rgba(0,0,0,.3);
+  }
+  html, body { transition: background-color .25s var(--ease); }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--ink);font-family:"Newsreader",Georgia,serif;font-size:19px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--ink);font-family:"Newsreader",Georgia,serif;
+    font-size:19px;line-height:1.6;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(circle at 1px 1px, rgba(28,29,26,.025) 1px, transparent 0);
+    background-size:28px 28px;
+  }
+  html[data-theme="dark"] body{background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.025) 1px, transparent 0);}
   a{color:inherit}
   .mono{font-family:"JetBrains Mono",monospace}
   .wrap{max-width:760px;margin:0 auto;padding:0 24px}
-  header.site{border-bottom:1px solid var(--line);padding:28px 0 24px;margin-bottom:40px}
-  .site-inner{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
-  .brand{font-family:"Fraunces",serif;font-weight:600;font-size:26px;letter-spacing:-.01em;cursor:pointer;background:none;border:none;color:var(--ink)}
+  ::selection{background:var(--accent);color:#fff}
+
+  button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
+    outline:2px solid var(--accent);outline-offset:2px;border-radius:2px;
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  header.site{
+    position:sticky;top:0;z-index:40;background:rgba(251,250,247,.88);
+    backdrop-filter:blur(10px) saturate(1.1);
+    border-bottom:1px solid var(--line);padding:22px 0;
+  }
+  .site-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .brand-group{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .brand{font-family:"Fraunces",serif;font-weight:600;font-size:24px;letter-spacing:-.01em;cursor:pointer;background:none;border:none;color:var(--ink);transition:opacity .2s var(--ease)}
+  .brand:hover{opacity:.7}
   .brand .dot{color:var(--accent)}
-  .tagline{font-size:13px;color:var(--faint);font-family:"JetBrains Mono",monospace}
-  .nav{display:flex;gap:18px;align-items:center}
-  .nav button{background:none;border:none;cursor:pointer;font-family:"JetBrains Mono",monospace;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);padding:4px 0;border-bottom:1px solid transparent}
-  .nav button:hover{color:var(--accent);border-bottom-color:var(--accent)}
-  .search-row{margin-bottom:32px;position:relative}
-  .search-row input{width:100%;padding:12px 14px 12px 38px;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--ink)}
-  .search-row input:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
-  .search-row::before{content:"⌕";position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--faint);font-size:18px}
-  .tagcloud{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:36px}
-  .tagcloud button{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent);background:var(--accent-soft);border:none;border-radius:20px;padding:4px 12px;cursor:pointer}
-  .tagcloud button:hover{background:var(--accent);color:#fff}
-  .post-card{padding:26px 0;border-bottom:1px solid var(--line);cursor:pointer}
+  .tagline{font-size:12.5px;color:var(--faint);font-family:"JetBrains Mono",monospace;white-space:nowrap}
+  .nav{display:flex;gap:4px;align-items:center}
+  .nav button{
+    background:none;border:none;cursor:pointer;font-family:"JetBrains Mono",monospace;
+    font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);
+    padding:7px 12px;border-radius:20px;transition:all .18s var(--ease);
+  }
+  .nav button:hover{color:var(--accent);background:var(--accent-soft)}
+  .nav button.primary{background:var(--ink);color:#fff}
+  .nav button.primary:hover{background:var(--accent);color:#fff}
+
+  main.wrap{padding-top:40px;padding-bottom:24px;min-height:60vh}
+
+  .search-row{margin-bottom:28px;position:relative}
+  .search-row input{
+    width:100%;padding:13px 16px 13px 42px;border:1px solid var(--line);border-radius:var(--radius-lg);
+    background:var(--paper);font-family:"JetBrains Mono",monospace;font-size:13.5px;color:var(--ink);
+    box-shadow:var(--shadow-sm);transition:border-color .18s var(--ease), box-shadow .18s var(--ease);
+  }
+  .search-row input::placeholder{color:var(--faint)}
+  .search-row input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--faint);pointer-events:none;display:flex}
+  .search-icon svg{width:16px;height:16px}
+  .search-spinner{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:14px;height:14px;display:none}
+  .search-spinner.show{display:block}
+  .search-spinner svg{width:14px;height:14px;animation:spin 0.7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .tagcloud{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+  .tagcloud button{
+    font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent);background:var(--accent-soft);
+    border:1px solid transparent;border-radius:20px;padding:5px 13px;cursor:pointer;
+    transition:all .18s var(--ease);
+  }
+  .tagcloud button:hover{background:var(--accent);color:#fff;transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+
+  .post-card{
+    padding:28px 0;border-bottom:1px solid var(--line);cursor:pointer;
+    transition:padding-left .22s var(--ease);position:relative;
+  }
+  .post-card:hover{padding-left:6px}
   .post-card:hover .post-title{color:var(--accent)}
-  .post-meta{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-  .post-title{font-family:"Fraunces",serif;font-weight:600;font-size:25px;line-height:1.25;letter-spacing:-.015em;transition:color .15s}
-  .post-excerpt{color:var(--ink-soft);margin-top:8px;font-size:17px}
+  .post-card::before{
+    content:"";position:absolute;left:-24px;top:0;bottom:0;width:3px;background:var(--accent);
+    transform:scaleY(0);transition:transform .22s var(--ease);transform-origin:top;
+  }
+  .post-card:hover::before{transform:scaleY(1)}
+  .post-meta{
+    font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--faint);text-transform:uppercase;
+    letter-spacing:.06em;margin-bottom:9px;display:flex;gap:13px;flex-wrap:wrap;align-items:center;
+  }
+  .post-meta .dot-sep::before{content:"·";margin-right:13px;color:var(--line)}
+  .post-title{font-family:"Fraunces",serif;font-weight:600;font-size:25px;line-height:1.25;letter-spacing:-.015em;transition:color .18s var(--ease)}
+  .post-excerpt{color:var(--ink-soft);margin-top:9px;font-size:16.5px;line-height:1.55}
   .tag{color:var(--accent)}
-  .badge{font-size:10px;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.05em}
-  .badge.draft{background:#f0eee6;color:var(--faint)}
-  .badge.scheduled{background:#fdf3df;color:var(--amber)}
+  .badge{font-size:10px;padding:3px 8px;border-radius:3px;text-transform:uppercase;letter-spacing:.05em;font-weight:500}
+  .badge.draft{background:var(--line-soft);color:var(--faint)}
+  .badge.scheduled{background:var(--amber-soft);color:var(--amber)}
   .badge.published{background:var(--accent-soft);color:var(--accent)}
-  article.post .post-title{font-size:38px;margin-bottom:14px;line-height:1.12}
+
+  article.post{animation:fadeUp .4s var(--ease)}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  article.post .post-title{font-size:max(30px, min(42px, 8vw));margin-bottom:16px;line-height:1.1}
   article.post .post-meta{margin-bottom:32px}
-  .cover{width:100%;border-radius:var(--radius);margin-bottom:28px;border:1px solid var(--line)}
-  .post-body{font-size:20px;line-height:1.72}
-  .post-body h2{font-family:"Fraunces",serif;font-size:26px;font-weight:600;margin:36px 0 12px;letter-spacing:-.01em}
-  .post-body h3{font-family:"Fraunces",serif;font-size:21px;font-weight:600;margin:28px 0 10px}
-  .post-body p{margin:0 0 20px}
-  .post-body ul,.post-body ol{margin:0 0 20px 24px}
-  .post-body li{margin-bottom:8px}
+  .cover{width:100%;display:block;border-radius:var(--radius-lg);margin-bottom:32px;border:1px solid var(--line);box-shadow:var(--shadow-md)}
+  .post-body{font-size:19.5px;line-height:1.75}
+  .post-body h2{font-family:"Fraunces",serif;font-size:27px;font-weight:600;margin:40px 0 14px;letter-spacing:-.01em}
+  .post-body h3{font-family:"Fraunces",serif;font-size:21px;font-weight:600;margin:30px 0 10px}
+  .post-body p{margin:0 0 21px}
+  .post-body ul,.post-body ol{margin:0 0 21px 26px}
+  .post-body li{margin-bottom:9px}
   .post-body strong{font-weight:600}
-  .post-body a{color:var(--accent);text-decoration:underline}
-  .post-body blockquote{border-left:3px solid var(--accent);padding:4px 0 4px 20px;margin:0 0 20px;color:var(--ink-soft);font-style:italic}
-  .post-body code{font-family:"JetBrains Mono",monospace;font-size:.85em;background:var(--accent-soft);padding:2px 6px;border-radius:3px;color:var(--accent)}
-  .post-body pre{background:#1c1d1a;color:#e8e6dd;padding:18px 20px;border-radius:var(--radius);overflow-x:auto;margin:0 0 24px}
+  .post-body img{max-width:100%;border-radius:var(--radius);margin:8px 0;display:block}
+  .post-body a{color:var(--accent);text-decoration:underline;text-decoration-color:var(--accent-soft);text-decoration-thickness:2px;transition:text-decoration-color .15s}
+  .post-body a:hover{text-decoration-color:var(--accent)}
+  .post-body blockquote{border-left:3px solid var(--accent);padding:4px 0 4px 22px;margin:0 0 21px;color:var(--ink-soft);font-style:italic}
+  .post-body code{font-family:"JetBrains Mono",monospace;font-size:.83em;background:var(--accent-soft);padding:2px 7px;border-radius:4px;color:var(--accent)}
+  .post-body pre{background:#1c1d1a;color:#e8e6dd;padding:20px 22px;border-radius:var(--radius-lg);overflow-x:auto;margin:0 0 26px;box-shadow:var(--shadow-md)}
   .post-body pre code{background:none;color:inherit;padding:0;font-size:13.5px}
-  .back-link{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;background:none;border:none;cursor:pointer;margin-bottom:28px;padding:0}
+  .back-link{
+    display:inline-flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:12px;
+    color:var(--faint);text-transform:uppercase;letter-spacing:.07em;background:none;border:none;
+    cursor:pointer;margin-bottom:30px;padding:0;transition:color .18s var(--ease);
+  }
   .back-link:hover{color:var(--accent)}
-  .related{margin-top:48px;padding-top:28px;border-top:1px solid var(--line)}
-  .related h3{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);margin-bottom:16px}
-  .related-item{cursor:pointer;padding:10px 0;font-family:"Fraunces",serif;font-weight:500;font-size:18px}
-  .related-item:hover{color:var(--accent)}
-  .panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:28px;margin-bottom:24px}
-  .panel h2{font-family:"Fraunces",serif;font-size:22px;font-weight:600;margin-bottom:18px}
-  label{display:block;font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);margin-bottom:6px}
-  input[type=text],input[type=password],input[type=datetime-local],textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius);font-family:"JetBrains Mono",monospace;font-size:14px;background:var(--bg);color:var(--ink);margin-bottom:18px}
-  textarea{min-height:340px;line-height:1.6;resize:vertical}
-  input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+  .back-link svg{width:13px;height:13px;transition:transform .18s var(--ease)}
+  .back-link:hover svg{transform:translateX(-3px)}
+  .related{margin-top:52px;padding-top:30px;border-top:1px solid var(--line)}
+  .related h3{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);margin-bottom:18px}
+  .related-item{cursor:pointer;padding:12px 0;font-family:"Fraunces",serif;font-weight:500;font-size:18px;border-bottom:1px solid var(--line-soft);transition:color .18s var(--ease),padding-left .18s var(--ease)}
+  .related-item:last-child{border-bottom:none}
+  .related-item:hover{color:var(--accent);padding-left:6px}
+
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:30px;margin-bottom:24px;box-shadow:var(--shadow-sm)}
+  .panel h2{font-family:"Fraunces",serif;font-size:22px;font-weight:600;margin-bottom:20px}
+  label{display:block;font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);margin-bottom:7px}
+  input[type=text],input[type=password],input[type=datetime-local],textarea{
+    width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:var(--radius);
+    font-family:"JetBrains Mono",monospace;font-size:14px;background:var(--bg);color:var(--ink);
+    margin-bottom:20px;transition:border-color .18s var(--ease), box-shadow .18s var(--ease);
+  }
+  textarea{min-height:360px;line-height:1.65;resize:vertical;font-family:"JetBrains Mono",monospace}
+  input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+
+  .cover-drop{
+    border:1.5px dashed var(--line);border-radius:var(--radius-lg);padding:20px;margin-bottom:20px;
+    background:var(--bg);transition:all .18s var(--ease);cursor:pointer;text-align:center;position:relative;
+  }
+  .cover-drop:hover,.cover-drop.dragover{border-color:var(--accent);background:var(--accent-soft)}
+  .cover-drop input[type=file]{display:none}
+  .cover-drop .hint{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--faint)}
+  .cover-drop .hint b{color:var(--accent);font-weight:600}
+  .cover-preview-wrap{position:relative;margin-bottom:20px}
+  .cover-preview-wrap img{width:100%;border-radius:var(--radius-lg);display:block;border:1px solid var(--line);max-height:280px;object-fit:cover}
+  .cover-remove{
+    position:absolute;top:10px;right:10px;background:rgba(28,29,26,.75);color:#fff;border:none;
+    border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:16px;line-height:1;
+    display:flex;align-items:center;justify-content:center;transition:background .15s;
+  }
+  .cover-remove:hover{background:var(--danger)}
+  .upload-progress{height:3px;background:var(--line-soft);border-radius:3px;overflow:hidden;margin-top:10px;display:none}
+  .upload-progress.show{display:block}
+  .upload-progress .bar{height:100%;background:var(--accent);width:0%;transition:width .15s linear}
+
+  .editor-toolbar{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+  .editor-toolbar button{
+    font-family:"JetBrains Mono",monospace;font-size:11px;padding:6px 11px;border-radius:5px;
+    border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);cursor:pointer;
+    transition:all .15s var(--ease);display:inline-flex;align-items:center;gap:5px;
+  }
+  .editor-toolbar button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+  .editor-toolbar button svg{width:13px;height:13px}
+  .editor-toolbar input[type=file]{display:none}
+
   .editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .preview-pane{border:1px dashed var(--line);border-radius:var(--radius);padding:18px;background:var(--bg);min-height:340px;overflow-y:auto;max-height:520px}
+  .preview-pane{
+    border:1px dashed var(--line);border-radius:var(--radius);padding:18px;background:var(--bg);
+    min-height:340px;overflow-y:auto;max-height:520px;
+  }
   .preview-pane .preview-label{font-family:"JetBrains Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);margin-bottom:12px}
-  .btn{font-family:"JetBrains Mono",monospace;font-size:13px;padding:10px 18px;border-radius:var(--radius);cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:#fff;letter-spacing:.02em}
-  .btn:hover{background:#163a33}
+
+  .btn{
+    font-family:"JetBrains Mono",monospace;font-size:13px;padding:11px 20px;border-radius:var(--radius);
+    cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:#fff;letter-spacing:.02em;
+    transition:all .18s var(--ease);display:inline-flex;align-items:center;gap:7px;
+  }
+  .btn:hover{background:var(--accent-bright);border-color:var(--accent-bright);transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+  .btn:active{transform:translateY(0)}
+  .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
   .btn.ghost{background:none;color:var(--accent)}
   .btn.ghost:hover{background:var(--accent-soft)}
   .btn.danger{background:none;border-color:var(--danger);color:var(--danger)}
   .btn.danger:hover{background:var(--danger);color:#fff}
   .btn.amber{background:none;border-color:var(--amber);color:var(--amber)}
   .btn.amber:hover{background:var(--amber);color:#fff}
+  .btn.small{padding:7px 13px;font-size:11.5px}
   .btn-group{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+  .spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+
   .stats-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px}
-  .stat{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;flex:1;min-width:110px}
-  .stat .num{font-family:"Fraunces",serif;font-size:28px;font-weight:600}
-  .stat .lbl{font-family:"JetBrains Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);margin-top:4px}
-  .admin-post-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
-  .admin-post-row .t{font-family:"Fraunces",serif;font-weight:500;font-size:17px}
-  .admin-post-row .s{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--faint);margin-top:2px}
-  .empty{text-align:center;color:var(--faint);padding:60px 0;font-family:"JetBrains Mono",monospace;font-size:13px}
-  .error{color:var(--danger);font-family:"JetBrains Mono",monospace;font-size:13px;margin-bottom:14px}
-  .schedule-box{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:18px}
-  footer.site{border-top:1px solid var(--line);margin-top:64px;padding:24px 0 48px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--faint);text-align:center;letter-spacing:.04em}
-  @media (max-width:680px){.editor-grid{grid-template-columns:1fr}article.post .post-title{font-size:30px}.post-body{font-size:18px}}
-  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  .stat{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px 20px;
+    flex:1;min-width:110px;box-shadow:var(--shadow-sm);transition:box-shadow .2s var(--ease);
+  }
+  .stat:hover{box-shadow:var(--shadow-md)}
+  .stat .num{font-family:"Fraunces",serif;font-size:30px;font-weight:600;color:var(--accent)}
+  .stat .lbl{font-family:"JetBrains Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);margin-top:5px}
+  .admin-post-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0;border-bottom:1px solid var(--line);transition:background .15s}
+  .admin-post-row:hover{background:var(--bg)}
+  .admin-post-row .t{font-family:"Fraunces",serif;font-weight:500;font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .admin-post-row .s{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--faint);margin-top:3px}
+
+  .empty{text-align:center;color:var(--faint);padding:64px 20px;font-family:"JetBrains Mono",monospace;font-size:13px}
+  .empty .empty-icon{font-size:28px;margin-bottom:14px;opacity:.5}
+  .empty .empty-detail{margin-top:8px;font-size:11.5px;color:var(--faint);opacity:.8}
+  .empty .btn{margin-top:18px}
+
+  .skeleton{display:flex;flex-direction:column;gap:0}
+  .skel-card{padding:28px 0;border-bottom:1px solid var(--line)}
+  .skel-line{background:linear-gradient(90deg,var(--line-soft) 25%,var(--line) 50%,var(--line-soft) 75%);background-size:200% 100%;animation:shimmer 1.4s ease infinite;border-radius:4px}
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  .skel-card .skel-line.meta{height:11px;width:140px;margin-bottom:12px}
+  .skel-card .skel-line.title{height:22px;width:78%;margin-bottom:10px}
+  .skel-card .skel-line.excerpt{height:14px;width:94%}
+
+  .error{
+    color:var(--danger);font-family:"JetBrains Mono",monospace;font-size:13px;margin-bottom:16px;
+    background:var(--danger-soft);border:1px solid #f0d2c6;border-radius:var(--radius);padding:11px 14px;
+    display:flex;align-items:flex-start;gap:9px;line-height:1.5;
+  }
+  .error svg{width:15px;height:15px;flex-shrink:0;margin-top:2px}
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);
+    color:#fff;font-family:"JetBrains Mono",monospace;font-size:12.5px;padding:12px 20px;border-radius:30px;
+    box-shadow:var(--shadow-lg);z-index:100;opacity:0;transition:all .25s var(--ease);pointer-events:none;
+    display:flex;align-items:center;gap:8px;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.error-toast{background:var(--danger)}
+
+  .schedule-box{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:20px}
+
+  /* ---------- reading progress bar ---------- */
+  .progress-bar{position:fixed;top:0;left:0;height:2.5px;background:var(--accent);z-index:60;width:0%;transition:width .1s linear}
+
+  /* ---------- theme toggle ---------- */
+  .theme-toggle{
+    background:none;border:1px solid var(--line);cursor:pointer;width:34px;height:34px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;color:var(--ink-soft);transition:all .18s var(--ease);
+  }
+  .theme-toggle:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+  .theme-toggle svg{width:16px;height:16px}
+
+  /* ---------- table of contents ---------- */
+  .toc{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:32px}
+  .toc summary{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);cursor:pointer;user-select:none}
+  .toc ol{list-style:none;margin-top:14px;counter-reset:toc}
+  .toc li{counter-increment:toc;margin-bottom:8px;font-size:15px}
+  .toc li::before{content:counter(toc) ".";font-family:"JetBrains Mono",monospace;color:var(--accent);margin-right:8px;font-size:12px}
+  .toc li.lvl3{margin-left:20px}
+  .toc a{color:var(--ink-soft);text-decoration:none;transition:color .15s}
+  .toc a:hover{color:var(--accent)}
+
+  /* ---------- share buttons ---------- */
+  .share-row{display:flex;gap:10px;align-items:center;margin:32px 0;flex-wrap:wrap}
+  .share-row .lbl{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}
+  .share-btn{
+    width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--paper);
+    display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink-soft);
+    transition:all .18s var(--ease);
+  }
+  .share-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);transform:translateY(-2px)}
+  .share-btn svg{width:16px;height:16px}
+
+  /* ---------- reactions ---------- */
+  .reactions-row{display:flex;gap:8px;flex-wrap:wrap;margin:36px 0;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .reaction-btn{
+    font-family:"JetBrains Mono",monospace;font-size:13px;padding:8px 14px;border-radius:20px;
+    border:1.5px solid var(--line);background:var(--paper);cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+    transition:all .18s var(--ease);
+  }
+  .reaction-btn:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .reaction-btn.active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+  .reaction-btn .emoji{font-size:16px}
+  .reaction-btn .count{font-weight:600;min-width:10px;text-align:center}
+
+  /* ---------- rating ---------- */
+  .rating-display{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .rating-stars{display:inline-flex;gap:2px}
+  .rating-stars .star{font-size:15px;color:var(--line)}
+  .rating-stars .star.filled{color:var(--amber)}
+  .rating-input{display:inline-flex;flex-direction:row-reverse;gap:4px}
+  .rating-input .star{font-size:22px;color:var(--line);transition:color .12s;cursor:pointer}
+  .rating-input .star.filled{color:var(--amber)}
+  .rating-input .star:hover,.rating-input .star:hover ~ .star{color:var(--amber)}
+
+  /* ---------- comments ---------- */
+  .comments-section{margin-top:48px;padding-top:32px;border-top:1px solid var(--line)}
+  .comments-section h3{font-family:"Fraunces",serif;font-size:22px;font-weight:600;margin-bottom:22px;display:flex;align-items:center;gap:10px}
+  .comments-section h3 .count-badge{font-family:"JetBrains Mono",monospace;font-size:12px;background:var(--accent-soft);color:var(--accent);padding:3px 10px;border-radius:12px}
+  .comment-form{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-lg);padding:22px;margin-bottom:28px}
+  .comment-form .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .comment-form textarea{min-height:90px}
+  .comment-item{padding:18px 0;border-bottom:1px solid var(--line-soft)}
+  .comment-item:last-child{border-bottom:none}
+  .comment-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+  .comment-avatar{
+    width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-family:"Fraunces",serif;font-weight:600;font-size:14px;flex-shrink:0;
+  }
+  .comment-author{font-weight:600;font-size:15px}
+  .comment-date{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--faint)}
+  .comment-body{color:var(--ink-soft);font-size:16px;line-height:1.55;margin-left:42px}
+  .no-comments{text-align:center;padding:32px 0;color:var(--faint);font-family:"JetBrains Mono",monospace;font-size:13px}
+
+  /* ---------- newsletter ---------- */
+  .newsletter-box{
+    background:var(--accent);color:#fff;border-radius:var(--radius-lg);padding:30px 32px;margin:40px 0;
+    display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:space-between;
+  }
+  .newsletter-box .copy{flex:1;min-width:200px}
+  .newsletter-box h4{font-family:"Fraunces",serif;font-size:19px;font-weight:600;margin-bottom:4px}
+  .newsletter-box p{font-size:14px;opacity:.85;font-family:"JetBrains Mono",monospace}
+  .newsletter-form{display:flex;gap:8px;flex-wrap:wrap}
+  .newsletter-form input{
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);color:#fff;
+    padding:10px 14px;border-radius:var(--radius);font-family:"JetBrains Mono",monospace;font-size:13px;
+    min-width:200px;margin-bottom:0;
+  }
+  .newsletter-form input::placeholder{color:rgba(255,255,255,.6)}
+  .newsletter-form input:focus{outline:none;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
+  .newsletter-form button{
+    background:#fff;color:var(--accent);border:none;padding:10px 18px;border-radius:var(--radius);
+    font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s;
+  }
+  .newsletter-form button:hover{opacity:.88}
+  .rss-link{display:inline-flex;align-items:center;gap:5px;color:var(--faint);transition:color .15s}
+  .rss-link:hover{color:var(--amber)}
+  .rss-link svg{width:13px;height:13px}
+
+  footer.site{border-top:1px solid var(--line);margin-top:72px;padding:28px 0 52px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--faint);text-align:center;letter-spacing:.04em}
+  footer.site .footer-links{display:flex;gap:16px;justify-content:center;margin-top:10px}
+
+  @media (max-width:680px){
+    .wrap{padding:0 18px}
+    main.wrap{padding-top:28px}
+    .tagline{display:none}
+    .editor-grid{grid-template-columns:1fr}
+    article.post .post-title{font-size:28px}
+    .post-body{font-size:17.5px}
+    .post-title{font-size:22px}
+    .panel{padding:20px}
+    .stat{min-width:96px;padding:14px 16px}
+    .stat .num{font-size:24px}
+    .nav button span.full{display:none}
+    .comment-form .row2{grid-template-columns:1fr}
+    .comment-body{margin-left:0;margin-top:6px}
+    .newsletter-box{padding:22px}
+    .newsletter-form{width:100%}
+    .newsletter-form input{flex:1;min-width:0}
+  }
 </style>
 </head>
 <body>
+  <div class="progress-bar" id="progressBar"></div>
   <header class="site">
     <div class="wrap site-inner">
-      <button class="brand" onclick="go('/')">ThoughtLog<span class="dot">.</span></button>
-      <span class="tagline">notes on what I build &amp; why</span>
+      <div class="brand-group">
+        <button class="brand" onclick="go('/')">ThoughtLog<span class="dot">.</span></button>
+        <span class="tagline">notes on what I build &amp; why</span>
+      </div>
       <nav class="nav" id="nav"></nav>
     </div>
   </header>
   <main class="wrap" id="app"></main>
-  <footer class="site"><div class="wrap">© Rafi Arsya · built with Node, Express, PostgreSQL &amp; a hand-rolled CMS</div></footer>
+  <footer class="site">
+    <div class="wrap">
+      © Rafi Arsya · built with Node, Express, PostgreSQL &amp; a hand-rolled CMS
+      <div class="footer-links">
+        <a class="rss-link" href="/rss.xml" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg> RSS feed</a>
+      </div>
+    </div>
+  </footer>
+  <div class="toast" id="toast"></div>
+
 <script>
-const app=document.getElementById("app"),nav=document.getElementById("nav");
+const app=document.getElementById("app"),nav=document.getElementById("nav"),toastEl=document.getElementById("toast");
 let me=null;
+let currentController=null;
+
 function go(p){history.pushState({},"",p);route()}
 window.onpopstate=route;
-async function api(path,opts={}){const r=await fetch("/api"+path,{headers:{"Content-Type":"application/json"},...opts});if(!r.ok)throw await r.json().catch(()=>({error:"Request failed"}));return r.json()}
+
+function showToast(msg,isError){
+  toastEl.textContent=msg;
+  toastEl.className="toast show"+(isError?" error-toast":"");
+  clearTimeout(toastEl._t);
+  toastEl._t=setTimeout(()=>toastEl.classList.remove("show"),3200);
+}
+
+async function api(path,opts={},signal){
+  const ctrl=new AbortController();
+  const timeout=setTimeout(()=>ctrl.abort("timeout"),10000);
+  const onParentAbort=()=>ctrl.abort("navigated-away");
+  if(signal){
+    if(signal.aborted)onParentAbort();
+    else signal.addEventListener("abort",onParentAbort);
+  }
+  try{
+    const r=await fetch("/api"+path,{headers:opts.body instanceof FormData?{}:{"Content-Type":"application/json"},...opts,signal:ctrl.signal});
+    if(!r.ok){
+      let payload;
+      try{payload=await r.json()}catch{payload={error:`Server error (${r.status})`}}
+      throw payload;
+    }
+    return await r.json();
+  }catch(e){
+    if(e?.name==="AbortError"||ctrl.signal.aborted){
+      if(ctrl.signal.reason==="timeout")throw{error:"Request timed out — the server took too long to respond."};
+      throw{error:"cancelled"};
+    }
+    throw e?.error?e:{error:"Network error — check your connection and try again."};
+  }finally{
+    clearTimeout(timeout);
+    if(signal)signal.removeEventListener("abort",onParentAbort);
+  }
+}
+
 function fmtDate(ts){return new Date(ts).toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric"})}
 function fmtDateTime(ts){return new Date(ts).toLocaleString("en-US",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"})}
 function esc(s){const d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML}
-async function refreshMe(){try{me=await api("/me")}catch{me=null}renderNav()}
-function renderNav(){nav.innerHTML=me?`<button onclick="go('/admin')">Dashboard</button><button onclick="go('/write')">Write</button><button onclick="logout()">Sign out</button>`:`<button onclick="go('/login')">Sign in</button>`}
 
-// ---- public list ----
+const ICONS={
+  back:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>`,
+  search:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`,
+  spinner:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-9-9" /></svg>`,
+  warn:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>`,
+  image:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>`,
+  sun:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>`,
+  moon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
+  twitter:`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.4l-5-6.6L5.7 22H2.6l8.2-9.4L1.6 2h6.5l4.6 6.1L18.9 2Zm-2.2 18h1.8L8 4H6.1l10.6 16Z"/></svg>`,
+  link:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+  starFull:`★`, starEmpty:`☆`,
+};
+
+// ---- dark mode: persisted in localStorage, applied before first paint of
+// each view via a data-attribute on <html> so CSS variables just work. ----
+function getTheme(){return localStorage.getItem("tl_theme")||"light"}
+function applyTheme(t){document.documentElement.setAttribute("data-theme",t)}
+function toggleTheme(){
+  const next=getTheme()==="dark"?"light":"dark";
+  localStorage.setItem("tl_theme",next);
+  applyTheme(next);
+  renderNav();
+}
+applyTheme(getTheme());
+
+async function refreshMe(){try{me=await api("/me")}catch{me=null}renderNav()}
+function renderNav(){
+  const themeBtn=`<button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle dark mode">${getTheme()==="dark"?ICONS.sun:ICONS.moon}</button>`;
+  nav.innerHTML=(me
+    ?`<button onclick="go('/admin')">Dashboard</button><button onclick="go('/write')">Write</button><button class="primary" onclick="logout()">Sign out</button>`
+    :`<button class="primary" onclick="go('/login')">Sign in</button>`)+themeBtn;
+}
+async function logout(){try{await api("/logout",{method:"POST"})}catch{} me=null;renderNav();go("/")}
+
+
+function errorBlock(msg){
+  return `<div class="error">${ICONS.warn}<span>${esc(msg)}</span></div>`;
+}
+
+function skeletonCards(n=4){
+  return `<div class="skeleton">${Array.from({length:n}).map(()=>`
+    <div class="skel-card">
+      <div class="skel-line meta"></div>
+      <div class="skel-line title"></div>
+      <div class="skel-line excerpt"></div>
+    </div>`).join("")}</div>`;
+}
+
+function newsletterBox(){
+  return `<div class="newsletter-box">
+    <div class="copy"><h4>Get new posts by email</h4><p>No spam, just new write-ups when they go up.</p></div>
+    <form class="newsletter-form" id="subForm" onsubmit="event.preventDefault();subscribe()">
+      <input id="subEmail" type="text" placeholder="you@example.com" autocomplete="email"/>
+      <button type="submit" id="subBtn">Subscribe</button>
+    </form>
+  </div>`;
+}
+async function subscribe(){
+  const input=document.getElementById("subEmail"),btn=document.getElementById("subBtn");
+  const email=input.value.trim();
+  if(!email){showToast("Enter an email address",true);return}
+  btn.disabled=true;const original=btn.textContent;btn.textContent="…";
+  try{
+    await api("/subscribe",{method:"POST",body:JSON.stringify({email})});
+    input.value="";
+    showToast("Subscribed — thanks!");
+  }catch(e){
+    showToast(e.error||"Could not subscribe",true);
+  }finally{
+    btn.disabled=false;btn.textContent=original;
+  }
+}
+
 async function viewList(searchTerm){
-  app.innerHTML=`<div class="search-row"><input id="q" type="text" placeholder="search posts…" value="${searchTerm?esc(searchTerm):""}"/></div><div id="tagcloud" class="tagcloud"></div><div id="list"><div class="empty">loading…</div></div>`;
-  const input=document.getElementById("q");let timer;
-  input.oninput=()=>{clearTimeout(timer);timer=setTimeout(()=>{const v=input.value.trim();go(v?"/?q="+encodeURIComponent(v):"/")},250)};
-  if(!searchTerm){try{const tags=await api("/tags");document.getElementById("tagcloud").innerHTML=tags.map(t=>`<button onclick="go('/tag/'+encodeURIComponent('${esc(t.tag)}'))">#${esc(t.tag)} ${t.count}</button>`).join("")}catch{}}
+  if(currentController)currentController.abort("navigated-away");
+  const ctrl=currentController=new AbortController();
+  app.innerHTML=`
+    <div class="search-row">
+      <span class="search-icon">${ICONS.search}</span>
+      <input id="q" type="text" placeholder="search posts…" value="${searchTerm?esc(searchTerm):""}" autocomplete="off"/>
+      <span class="search-spinner" id="searchSpinner">${ICONS.spinner}</span>
+    </div>
+    <div id="tagcloud" class="tagcloud"></div>
+    <div id="list">${skeletonCards()}</div>
+    ${searchTerm?"":newsletterBox()}`;
+  const input=document.getElementById("q"),spinner=document.getElementById("searchSpinner");
+  let timer;
+  input.focus();
+  input.setSelectionRange(input.value.length,input.value.length);
+  input.oninput=()=>{
+    clearTimeout(timer);
+    spinner.classList.add("show");
+    timer=setTimeout(()=>{const v=input.value.trim();go(v?"/?q="+encodeURIComponent(v):"/")},320);
+  };
+  if(!searchTerm){
+    try{
+      const tags=await api("/tags",{},ctrl.signal);
+      const tc=document.getElementById("tagcloud");
+      if(tc)tc.innerHTML=tags.map(t=>`<button onclick="go('/tag/'+encodeURIComponent('${esc(t.tag)}'))">#${esc(t.tag)} ${t.count}</button>`).join("");
+    }catch{}
+  }
   const list=document.getElementById("list");
   try{
-    const posts=searchTerm?await api("/search?q="+encodeURIComponent(searchTerm)):await api("/posts");
-    renderCards(list,posts,searchTerm?`nothing matched “${esc(searchTerm)}”`:"no posts yet");
-  }catch{list.innerHTML=`<div class="empty">could not load posts</div>`}
+    const posts=searchTerm?await api("/search?q="+encodeURIComponent(searchTerm),{},ctrl.signal):await api("/posts",{},ctrl.signal);
+    spinner.classList.remove("show");
+    if(!list)return;
+    renderCards(list,posts,searchTerm
+      ?`<div class="empty-icon">⌕</div>nothing matched "${esc(searchTerm)}"<div class="empty-detail">try a different word, or <a href="#" onclick="event.preventDefault();go('/')" style="color:var(--accent)">clear the search</a></div>`
+      :`<div class="empty-icon">✎</div>no posts yet`);
+  }catch(e){
+    spinner.classList.remove("show");
+    if(e.error==="cancelled"||!list)return;
+    list.innerHTML=`<div class="empty">${errorBlock(e.error||"Could not load posts.")}<button class="btn ghost small" onclick="viewList(${searchTerm?`'${searchTerm.replace(/'/g,"\\'")}'`:""})">Try again</button></div>`;
+  }
 }
 function renderCards(el,posts,emptyMsg){
   if(!posts.length){el.innerHTML=`<div class="empty">${emptyMsg}</div>`;return}
-  el.innerHTML=posts.map(p=>`<div class="post-card" onclick="go('/p/${p.slug}')"><div class="post-meta"><span>${fmtDate(p.publishAt||p.createdAt)}</span>${p.tags.map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}<span>${p.readingTime} min read</span><span>${p.views} views</span></div><div class="post-title">${esc(p.title)}</div><div class="post-excerpt">${esc(p.excerpt)}</div></div>`).join("");
+  el.innerHTML=posts.map(p=>`<div class="post-card" onclick="go('/p/${p.slug}')"><div class="post-meta"><span>${fmtDate(p.publishAt||p.createdAt)}</span>${p.tags.map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}<span class="dot-sep">${p.readingTime} min read</span><span>${p.views} views</span></div><div class="post-title">${esc(p.title)}</div><div class="post-excerpt">${esc(p.excerpt)}</div></div>`).join("");
 }
 
-// ---- tag page ----
 async function viewTag(tag){
-  app.innerHTML=`<button class="back-link" onclick="go('/')">← all posts</button><h2 style="font-family:Fraunces;font-weight:600;font-size:28px;margin-bottom:24px">#${esc(tag)}</h2><div id="list"><div class="empty">loading…</div></div>`;
-  try{const posts=await api("/tags/"+encodeURIComponent(tag));renderCards(document.getElementById("list"),posts,"no posts with this tag")}catch{document.getElementById("list").innerHTML=`<div class="empty">could not load</div>`}
-}
-
-// ---- single post ----
-async function viewPost(slug){
-  app.innerHTML=`<div class="empty">loading…</div>`;
+  if(currentController)currentController.abort("navigated-away");
+  const ctrl=currentController=new AbortController();
+  app.innerHTML=`<button class="back-link" onclick="go('/')">${ICONS.back} all posts</button><h2 style="font-family:Fraunces;font-weight:600;font-size:28px;margin-bottom:26px">#${esc(tag)}</h2><div id="list">${skeletonCards(3)}</div>`;
   try{
-    const p=await api("/posts/"+slug);
-    app.innerHTML=`<button class="back-link" onclick="go('/')">← all posts</button><article class="post"><div class="post-title">${esc(p.title)}</div><div class="post-meta"><span>${fmtDate(p.publishAt||p.createdAt)}</span>${p.tags.map(t=>`<span class="tag" style="cursor:pointer" onclick="go('/tag/'+encodeURIComponent('${esc(t)}'))">#${esc(t)}</span>`).join("")}<span>${p.readingTime} min read</span><span>${p.views} views</span></div>${p.coverImage?`<img class="cover" src="${esc(p.coverImage)}" alt=""/>`:""}<div class="post-body">${p.html}</div>${p.related&&p.related.length?`<div class="related"><h3>Related</h3>${p.related.map(r=>`<div class="related-item" onclick="go('/p/${r.slug}')">${esc(r.title)}</div>`).join("")}</div>`:""}</article>`;
-  }catch{app.innerHTML=`<button class="back-link" onclick="go('/')">← all posts</button><div class="empty">post not found</div>`}
+    const posts=await api("/tags/"+encodeURIComponent(tag),{},ctrl.signal);
+    const list=document.getElementById("list");
+    if(list)renderCards(list,posts,`<div class="empty-icon">#</div>no posts with this tag`);
+  }catch(e){
+    if(e.error==="cancelled")return;
+    const list=document.getElementById("list");
+    if(list)list.innerHTML=`<div class="empty">${errorBlock(e.error||"Could not load this tag.")}<button class="btn ghost small" onclick="viewTag('${tag.replace(/'/g,"\\'")}')">Try again</button></div>`;
+  }
 }
 
-// ---- login ----
+// Extract h2/h3 headings from rendered HTML to build a table of contents.
+// Mutates nothing — just reads the headings already in the DOM after the
+// post body is inserted, and injects matching ids if marked.js didn't.
+function buildToc(bodyEl){
+  const headings=bodyEl.querySelectorAll("h2, h3");
+  if(headings.length<3)return ""; // not worth a TOC for a short post
+  const items=[...headings].map((h,i)=>{
+    if(!h.id)h.id=`sec-${i}-${h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,40)}`;
+    const lvl=h.tagName==="H3"?" lvl3":"";
+    return `<li class="${lvl.trim()}"><a href="#${h.id}">${esc(h.textContent)}</a></li>`;
+  }).join("");
+  return `<details class="toc" open><summary>Contents</summary><ol>${items}</ol></details>`;
+}
+
+function shareRow(post,url){
+  const text=encodeURIComponent(post.title);
+  const link=encodeURIComponent(url);
+  return `<div class="share-row">
+    <span class="lbl">Share</span>
+    <a class="share-btn" href="https://twitter.com/intent/tweet?text=${text}&url=${link}" target="_blank" rel="noopener" title="Share on X">${ICONS.twitter}</a>
+    <button class="share-btn" onclick="copyPostLink('${url.replace(/'/g,"\\'")}')" title="Copy link">${ICONS.link}</button>
+  </div>`;
+}
+function copyPostLink(url){
+  navigator.clipboard?.writeText(url).then(()=>showToast("Link copied")).catch(()=>showToast("Could not copy link",true));
+}
+
+function reactionsRow(slug,reactions,mine){
+  const EMOJI=["👍","❤️","🔥","😮","😂","🤔"];
+  return `<div class="reactions-row" id="reactions">${EMOJI.map(e=>{
+    const count=reactions[e]||0;
+    const active=mine.includes(e)?" active":"";
+    return `<button class="reaction-btn${active}" onclick="react('${slug}','${e}')"><span class="emoji">${e}</span>${count>0?`<span class="count">${count}</span>`:""}</button>`;
+  }).join("")}</div>`;
+}
+async function react(slug,emoji){
+  const el=document.getElementById("reactions");
+  try{
+    const r=await api("/posts/"+slug+"/react",{method:"POST",body:JSON.stringify({emoji})});
+    const currentlyActive=[...(el?.querySelectorAll(".reaction-btn.active .emoji")||[])].map(x=>x.textContent);
+    const nextMine=r.added
+      ? [...currentlyActive, emoji]
+      : currentlyActive.filter((x)=>x!==emoji);
+    if(el)el.outerHTML=reactionsRow(slug,r.counts,nextMine);
+  }catch(e){showToast(e.error||"Could not react",true)}
+}
+
+function ratingStars(value,max=5){
+  let out="";
+  for(let i=1;i<=max;i++)out+=`<span class="star${i<=Math.round(value)?" filled":""}">${i<=Math.round(value)?ICONS.starFull:ICONS.starEmpty}</span>`;
+  return out;
+}
+function ratingInput(){
+  return `<div class="rating-input" id="ratingInput" data-value="0">
+    ${[5,4,3,2,1].map(n=>`<span class="star" data-n="${n}" onclick="setRating(${n})">${ICONS.starEmpty}</span>`).join("")}
+  </div>`;
+}
+function setRating(n){
+  const el=document.getElementById("ratingInput");
+  el.dataset.value=n;
+  el.querySelectorAll(".star").forEach(s=>{
+    const filled=Number(s.dataset.n)<=n;
+    s.classList.toggle("filled",filled);
+    s.textContent=filled?ICONS.starFull:ICONS.starEmpty;
+  });
+}
+
+function commentsSection(slug,comments,rating){
+  const list=comments.length
+    ?comments.map(c=>`
+      <div class="comment-item">
+        <div class="comment-head">
+          <div class="comment-avatar">${esc(c.author[0]?.toUpperCase()||"?")}</div>
+          <span class="comment-author">${esc(c.author)}</span>
+          ${c.rating?`<span class="rating-stars">${ratingStars(c.rating)}</span>`:""}
+          <span class="comment-date">${fmtDate(c.createdAt)}</span>
+        </div>
+        <div class="comment-body">${esc(c.body)}</div>
+      </div>`).join("")
+    :`<div class="no-comments">No comments yet — be the first to share your thoughts.</div>`;
+
+  const ratingHeader=rating.count>0
+    ?`<div class="rating-display"><span class="rating-stars">${ratingStars(rating.average)}</span><span class="mono" style="font-size:12px;color:var(--faint)">${rating.average} from ${rating.count} rating${rating.count===1?"":"s"}</span></div>`
+    :"";
+
+  return `<div class="comments-section">
+    <h3>Comments <span class="count-badge">${comments.length}</span></h3>
+    ${ratingHeader}
+    <div class="comment-form">
+      <div id="commentErr"></div>
+      <label>Your rating (optional)</label>
+      ${ratingInput()}
+      <div class="row2" style="margin-top:16px">
+        <div><label>Name</label><input id="cAuthor" type="text" placeholder="Your name" style="margin-bottom:0"/></div>
+        <div><label>Email (optional, never shown)</label><input id="cEmail" type="text" placeholder="you@example.com" style="margin-bottom:0"/></div>
+      </div>
+      <label style="margin-top:16px">Comment</label>
+      <textarea id="cBody" placeholder="What did you think?"></textarea>
+      <button class="btn" id="commentBtn" onclick="submitComment('${slug}')">Post comment</button>
+    </div>
+    <div id="commentsList">${list}</div>
+  </div>`;
+}
+async function submitComment(slug){
+  const err=document.getElementById("commentErr");err.innerHTML="";
+  const author=document.getElementById("cAuthor").value.trim();
+  const email=document.getElementById("cEmail").value.trim();
+  const body=document.getElementById("cBody").value.trim();
+  const rating=Number(document.getElementById("ratingInput").dataset.value)||null;
+  if(!author||!body){err.innerHTML=errorBlock("Name and comment can't be empty.");return}
+  const btn=document.getElementById("commentBtn");
+  btn.disabled=true;const original=btn.innerHTML;btn.innerHTML=`<span class="spin"></span> Posting…`;
+  try{
+    const c=await api("/posts/"+slug+"/comments",{method:"POST",body:JSON.stringify({author,email,body,rating})});
+    const list=document.getElementById("commentsList");
+    const noComments=list.querySelector(".no-comments");
+    if(noComments)noComments.remove();
+    list.insertAdjacentHTML("beforeend",`
+      <div class="comment-item">
+        <div class="comment-head">
+          <div class="comment-avatar">${esc(c.author[0]?.toUpperCase()||"?")}</div>
+          <span class="comment-author">${esc(c.author)}</span>
+          ${c.rating?`<span class="rating-stars">${ratingStars(c.rating)}</span>`:""}
+          <span class="comment-date">${fmtDate(c.createdAt)}</span>
+        </div>
+        <div class="comment-body">${esc(c.body)}</div>
+      </div>`);
+    document.querySelector(".comments-section h3 .count-badge").textContent=
+      Number(document.querySelector(".comments-section h3 .count-badge").textContent)+1;
+    document.getElementById("cAuthor").value="";
+    document.getElementById("cEmail").value="";
+    document.getElementById("cBody").value="";
+    setRating(0);
+    showToast("Comment posted");
+  }catch(e){
+    err.innerHTML=errorBlock(e.error||"Could not post your comment.");
+  }finally{
+    btn.disabled=false;btn.innerHTML=original;
+  }
+}
+
+// Reading-progress bar: how far through the post's body the reader has
+// scrolled, 0 at the top of the body to 100 at its end. Bound once per post
+// view and torn down implicitly when the page navigates (route() rewrites
+// app.innerHTML, which detaches the old listener target along with it —
+// but the window-level listener itself needs explicit cleanup).
+let progressHandler=null;
+function bindProgressBar(bodyEl){
+  const bar=document.getElementById("progressBar");
+  if(progressHandler)window.removeEventListener("scroll",progressHandler);
+  progressHandler=()=>{
+    const rect=bodyEl.getBoundingClientRect();
+    const total=rect.height-window.innerHeight*0.5;
+    const passed=Math.min(Math.max(-rect.top,0),Math.max(total,1));
+    bar.style.width=`${Math.min(100,(passed/Math.max(total,1))*100)}%`;
+  };
+  window.addEventListener("scroll",progressHandler,{passive:true});
+  progressHandler();
+}
+
+async function viewPost(slug){
+  if(currentController)currentController.abort("navigated-away");
+  const ctrl=currentController=new AbortController();
+  if(progressHandler){window.removeEventListener("scroll",progressHandler);progressHandler=null}
+  document.getElementById("progressBar").style.width="0%";
+  app.innerHTML=`<div class="skeleton" style="padding-top:4px"><div class="skel-line meta" style="margin-bottom:18px"></div><div class="skel-line title" style="height:34px;width:85%;margin-bottom:28px"></div><div class="skel-line excerpt" style="height:200px;border-radius:10px;margin-bottom:24px"></div><div class="skel-line excerpt" style="margin-bottom:12px"></div><div class="skel-line excerpt" style="width:90%"></div></div>`;
+  try{
+    const p=await api("/posts/"+slug,{},ctrl.signal);
+    if(!document.body.contains(app))return;
+    const url=location.origin+"/p/"+p.slug;
+    app.innerHTML=`<button class="back-link" onclick="go('/')">${ICONS.back} all posts</button><article class="post"><div class="post-title">${esc(p.title)}</div><div class="post-meta"><span>${fmtDate(p.publishAt||p.createdAt)}</span>${p.tags.map(t=>`<span class="tag" style="cursor:pointer" onclick="go('/tag/'+encodeURIComponent('${esc(t)}'))">#${esc(t)}</span>`).join("")}<span class="dot-sep">${p.readingTime} min read</span><span>${p.views} views</span></div>${p.coverImage?`<img class="cover" src="${esc(p.coverImage)}" alt=""/>`:""}<div id="tocSlot"></div><div class="post-body" id="postBody">${p.html}</div>${shareRow(p,url)}${reactionsRow(p.slug,p.reactions||{},p.myReactions||[])}${p.related&&p.related.length?`<div class="related"><h3>Related</h3>${p.related.map(r=>`<div class="related-item" onclick="go('/p/${r.slug}')">${esc(r.title)}</div>`).join("")}</div>`:""}${commentsSection(p.slug,p.comments||[],p.rating||{count:0,average:0})}</article>`;
+    const bodyEl=document.getElementById("postBody");
+    document.getElementById("tocSlot").innerHTML=buildToc(bodyEl);
+    bindProgressBar(bodyEl);
+  }catch(e){
+    if(e.error==="cancelled")return;
+    app.innerHTML=`<button class="back-link" onclick="go('/')">${ICONS.back} all posts</button><div class="empty">${errorBlock(e.error&&e.error!=="Post not found"?e.error:"This post doesn't exist, or isn't published yet.")}<button class="btn ghost small" onclick="viewPost('${slug.replace(/'/g,"\\'")}')">Try again</button></div>`;
+  }
+}
+
 function viewLogin(){
-  app.innerHTML=`<div class="panel" style="max-width:380px;margin:40px auto"><h2>Sign in to write</h2><div id="err"></div><label>Username</label><input id="u" type="text" autocomplete="username"/><label>Password</label><input id="pw" type="password" autocomplete="current-password"/><button class="btn" onclick="doLogin()">Sign in</button></div>`;
+  app.innerHTML=`<div class="panel" style="max-width:380px;margin:40px auto"><h2>Sign in to write</h2><div id="err"></div><label>Username</label><input id="u" type="text" autocomplete="username"/><label>Password</label><input id="pw" type="password" autocomplete="current-password"/><button class="btn" id="loginBtn" onclick="doLogin()">Sign in</button></div>`;
+  document.getElementById("u").focus();
   document.getElementById("pw").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin()});
+  document.getElementById("u").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("pw").focus()});
 }
 async function doLogin(){
-  const err=document.getElementById("err");err.innerHTML="";
-  try{await api("/login",{method:"POST",body:JSON.stringify({username:document.getElementById("u").value,password:document.getElementById("pw").value})});await refreshMe();go("/admin")}
-  catch(e){err.innerHTML=`<div class="error">${esc(e.error||"Login failed")}</div>`}
+  const err=document.getElementById("err"),btn=document.getElementById("loginBtn");
+  err.innerHTML="";
+  const u=document.getElementById("u").value,pw=document.getElementById("pw").value;
+  if(!u.trim()||!pw){err.innerHTML=errorBlock("Enter both a username and password.");return}
+  btn.disabled=true;btn.innerHTML=`<span class="spin"></span> Signing in…`;
+  try{
+    await api("/login",{method:"POST",body:JSON.stringify({username:u,password:pw})});
+    await refreshMe();go("/admin");
+  }catch(e){
+    err.innerHTML=errorBlock(e.error||"Login failed");
+    btn.disabled=false;btn.innerHTML="Sign in";
+  }
 }
-async function logout(){await api("/logout",{method:"POST"});me=null;renderNav();go("/")}
 
-// ---- admin dashboard ----
 async function viewAdmin(){
   if(!me)return go("/login");
-  app.innerHTML=`<div class="empty">loading…</div>`;
-  let posts=[],stats={};
-  try{posts=await api("/admin/posts");stats=await api("/admin/stats")}catch{return go("/login")}
-  app.innerHTML=`<div class="stats-row"><div class="stat"><div class="num">${stats.total}</div><div class="lbl">Total</div></div><div class="stat"><div class="num">${stats.published}</div><div class="lbl">Published</div></div><div class="stat"><div class="num">${stats.scheduled}</div><div class="lbl">Scheduled</div></div><div class="stat"><div class="num">${stats.drafts}</div><div class="lbl">Drafts</div></div><div class="stat"><div class="num">${stats.total_views}</div><div class="lbl">Total Views</div></div></div><div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px"><h2 style="margin:0">All posts</h2><button class="btn" onclick="go('/write')">+ New post</button></div><div id="adminlist"></div></div>`;
+  app.innerHTML=`<div class="skeleton">${skeletonCards(3)}</div>`;
+  let posts,stats,top;
+  try{
+    [posts,stats,top]=await Promise.all([api("/admin/posts"),api("/admin/stats"),api("/admin/top-posts")]);
+  }catch(e){
+    if(e.error==="Not signed in"||e.error==="Session expired or invalid")return go("/login");
+    app.innerHTML=`<div class="empty">${errorBlock(e.error||"Could not load the dashboard.")}<button class="btn ghost small" onclick="viewAdmin()">Try again</button></div>`;
+    return;
+  }
+  const topHtml=top.length
+    ?top.map((p,i)=>`<div class="admin-post-row"><div><div class="t"><span class="mono" style="color:var(--faint);font-size:13px;margin-right:6px">#${i+1}</span>${esc(p.title)}</div><div class="s">${p.views} views · ${p.commentCount} comment${p.commentCount===1?"":"s"}</div></div><button class="btn ghost small" onclick="go('/p/${p.slug}')">View</button></div>`).join("")
+    :`<div class="empty" style="padding:24px 0">No published posts yet</div>`;
+
+  app.innerHTML=`<div class="stats-row"><div class="stat"><div class="num">${stats.total}</div><div class="lbl">Total</div></div><div class="stat"><div class="num">${stats.published}</div><div class="lbl">Published</div></div><div class="stat"><div class="num">${stats.scheduled}</div><div class="lbl">Scheduled</div></div><div class="stat"><div class="num">${stats.drafts}</div><div class="lbl">Drafts</div></div><div class="stat"><div class="num">${stats.total_views}</div><div class="lbl">Total Views</div></div><div class="stat"><div class="num">${stats.total_comments}</div><div class="lbl">Comments</div></div><div class="stat"><div class="num">${stats.total_subscribers}</div><div class="lbl">Subscribers</div></div></div>
+  <div class="panel"><h2>Top posts</h2><div>${topHtml}</div></div>
+  <div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px"><h2 style="margin:0">All posts</h2><button class="btn" onclick="go('/write')">+ New post</button></div><div id="adminlist"></div></div>`;
   renderAdminList(posts);
 }
 function renderAdminList(posts){
   const el=document.getElementById("adminlist");
-  if(!posts.length){el.innerHTML=`<div class="empty">no posts yet</div>`;return}
+  if(!posts.length){el.innerHTML=`<div class="empty"><div class="empty-icon">✎</div>no posts yet<button class="btn small" onclick="go('/write')">Write your first post</button></div>`;return}
   el.innerHTML=posts.map(p=>{
     let sched=p.status==="scheduled"&&p.publishAt?` · publishes ${fmtDateTime(p.publishAt)}`:"";
-    return `<div class="admin-post-row"><div><div class="t">${esc(p.title)} <span class="badge ${p.status}">${p.status}</span></div><div class="s">/${esc(p.slug)} · ${p.views} views${sched}</div></div><div class="btn-group"><button class="btn ghost" onclick="go('/edit/${p.id}')">Edit</button><button class="btn ghost" onclick="go('/p/${p.slug}')">View</button><button class="btn danger" onclick="delPost(${p.id})">Delete</button></div></div>`;
+    return `<div class="admin-post-row"><div><div class="t">${esc(p.title)} <span class="badge ${p.status}">${p.status}</span></div><div class="s">/${esc(p.slug)} · ${p.views} views${sched}</div></div><div class="btn-group"><button class="btn ghost small" onclick="go('/edit/${p.id}')">Edit</button><button class="btn ghost small" onclick="go('/p/${p.slug}')">View</button><button class="btn danger small" onclick="delPost(${p.id})">Delete</button></div></div>`;
   }).join("");
 }
-async function delPost(id){if(!confirm("Delete this post for good?"))return;await api("/admin/posts/"+id,{method:"DELETE"});viewAdmin()}
+async function delPost(id){
+  if(!confirm("Delete this post for good?"))return;
+  try{await api("/admin/posts/"+id,{method:"DELETE"});showToast("Post deleted");viewAdmin()}
+  catch(e){showToast(e.error||"Could not delete post",true)}
+}
 
-// ---- editor (create + edit) ----
+let pendingCoverUrl="";
 async function viewEditor(editId){
   if(!me)return go("/login");
   let post={title:"",tags:"",body:"",coverImage:"",status:"draft",publishAt:null};
   if(editId){
+    app.innerHTML=`<div class="skeleton">${skeletonCards(1)}</div>`;
     try{const p=await api("/admin/posts/"+editId);post={title:p.title,tags:p.tags.join(", "),body:p.body,coverImage:p.coverImage||"",status:p.status,publishAt:p.publishAt}}
-    catch{return go("/admin")}
+    catch(e){
+      if(e.error==="Not signed in"||e.error==="Session expired or invalid")return go("/login");
+      app.innerHTML=`<div class="empty">${errorBlock(e.error||"Could not load this post.")}<button class="btn ghost small" onclick="go('/admin')">Back to dashboard</button></div>`;
+      return;
+    }
   }
+  pendingCoverUrl=post.coverImage||"";
   const schedDefault=post.publishAt?new Date(post.publishAt).toISOString().slice(0,16):"";
   app.innerHTML=`
-    <button class="back-link" onclick="go('/admin')">← dashboard</button>
+    <button class="back-link" onclick="go('/admin')">${ICONS.back} dashboard</button>
     <div class="panel">
       <h2>${editId?"Edit post":"Write a new post"}</h2>
       <div id="err"></div>
       <label>Title</label><input id="title" type="text" placeholder="What's on your mind?" value="${esc(post.title)}"/>
       <label>Tags (comma separated)</label><input id="tags" type="text" placeholder="backend, devops" value="${esc(post.tags)}"/>
-      <label>Cover image URL (optional)</label><input id="cover" type="text" placeholder="https://…" value="${esc(post.coverImage)}"/>
+      <label>Cover image</label>
+      <div id="coverArea"></div>
       <label>Body (Markdown) — live preview on the right</label>
+      <div class="editor-toolbar">
+        <button type="button" onclick="document.getElementById('inlineImgInput').click()">${ICONS.image} Insert image</button>
+        <input type="file" id="inlineImgInput" accept="image/png,image/jpeg,image/webp,image/gif"/>
+      </div>
       <div class="editor-grid">
         <textarea id="body" placeholder="## A heading&#10;&#10;Write your thoughts. **Bold**, lists, > quotes and \`code\` all work.">${esc(post.body)}</textarea>
         <div class="preview-pane"><div class="preview-label">Live preview</div><div id="preview" class="post-body"></div></div>
@@ -209,39 +859,126 @@ async function viewEditor(editId){
         <input id="schedat" type="datetime-local" value="${schedDefault}" style="margin-bottom:0"/>
       </div>
       <div class="btn-group">
-        <button class="btn" onclick="savePost(${editId||0},'publish')">${editId?"Publish":"Publish now"}</button>
-        <button class="btn amber" onclick="savePost(${editId||0},'schedule')">Schedule</button>
-        <button class="btn ghost" onclick="savePost(${editId||0},'draft')">Save draft</button>
+        <button class="btn" id="publishBtn" onclick="savePost(${editId||0},'publish')">${editId?"Publish":"Publish now"}</button>
+        <button class="btn amber" id="scheduleBtn" onclick="savePost(${editId||0},'schedule')">Schedule</button>
+        <button class="btn ghost" id="draftBtn" onclick="savePost(${editId||0},'draft')">Save draft</button>
       </div>
     </div>`;
+  renderCoverArea();
   const bodyEl=document.getElementById("body"),prev=document.getElementById("preview");
   let t;
   async function updatePreview(){try{const r=await api("/admin/preview",{method:"POST",body:JSON.stringify({body:bodyEl.value})});prev.innerHTML=r.html||'<span style="color:var(--faint)">nothing yet…</span>'}catch{}}
   bodyEl.oninput=()=>{clearTimeout(t);t=setTimeout(updatePreview,300)};
   updatePreview();
+
+  document.getElementById("inlineImgInput").onchange=async(e)=>{
+    const file=e.target.files[0];if(!file)return;
+    const placeholder=`![uploading ${file.name}…]()`;
+    const start=bodyEl.selectionStart,end=bodyEl.selectionEnd;
+    bodyEl.value=bodyEl.value.slice(0,start)+placeholder+bodyEl.value.slice(end);
+    try{
+      const url=await uploadFile(file);
+      bodyEl.value=bodyEl.value.replace(placeholder,`![${file.name.replace(/\.[^.]+$/,"")}](${url})`);
+      showToast("Image inserted");
+    }catch(err){
+      bodyEl.value=bodyEl.value.replace(placeholder,"");
+      showToast(err.error||"Upload failed",true);
+    }
+    updatePreview();
+    e.target.value="";
+  };
 }
+
+function renderCoverArea(){
+  const el=document.getElementById("coverArea");
+  if(pendingCoverUrl){
+    el.innerHTML=`<div class="cover-preview-wrap"><img src="${esc(pendingCoverUrl)}" alt=""/><button type="button" class="cover-remove" onclick="removeCover()" title="Remove cover image">✕</button></div>`;
+  }else{
+    el.innerHTML=`
+      <label class="cover-drop" id="coverDrop">
+        <input type="file" id="coverInput" accept="image/png,image/jpeg,image/webp,image/gif"/>
+        <div class="hint">${ICONS.image}<br/><b>Click to upload</b> or drag an image here<br/>JPEG, PNG, WEBP or GIF · up to 5MB</div>
+        <div class="upload-progress" id="coverProgress"><div class="bar" id="coverBar"></div></div>
+      </label>`;
+    const drop=document.getElementById("coverDrop"),input=document.getElementById("coverInput");
+    input.onchange=async(e)=>{const f=e.target.files[0];if(f)await handleCoverFile(f)};
+    ["dragenter","dragover"].forEach(evt=>drop.addEventListener(evt,(e)=>{e.preventDefault();drop.classList.add("dragover")}));
+    ["dragleave","drop"].forEach(evt=>drop.addEventListener(evt,(e)=>{e.preventDefault();drop.classList.remove("dragover")}));
+    drop.addEventListener("drop",async(e)=>{const f=e.dataTransfer.files[0];if(f)await handleCoverFile(f)});
+  }
+}
+function removeCover(){pendingCoverUrl="";renderCoverArea()}
+async function handleCoverFile(file){
+  if(!file.type.startsWith("image/")){showToast("Please choose an image file",true);return}
+  if(file.size>5*1024*1024){showToast("Image is larger than 5MB",true);return}
+  const bar=document.getElementById("coverBar"),wrap=document.getElementById("coverProgress");
+  wrap?.classList.add("show");
+  try{
+    const url=await uploadFile(file,(pct)=>{if(bar)bar.style.width=pct+"%"});
+    pendingCoverUrl=url;
+    renderCoverArea();
+    showToast("Cover image uploaded");
+  }catch(err){
+    showToast(err.error||"Upload failed",true);
+    wrap?.classList.remove("show");
+  }
+}
+
+function uploadFile(file,onProgress){
+  return new Promise((resolve,reject)=>{
+    const fd=new FormData();fd.append("file",file);
+    const xhr=new XMLHttpRequest();
+    xhr.open("POST","/api/admin/upload");
+    xhr.upload.onprogress=(e)=>{if(e.lengthComputable&&onProgress)onProgress(Math.round(e.loaded/e.total*100))};
+    xhr.onload=()=>{
+      let data;try{data=JSON.parse(xhr.responseText)}catch{data={}}
+      if(xhr.status>=200&&xhr.status<300&&data.url)resolve(data.url);
+      else reject(data.error?data:{error:"Upload failed"});
+    };
+    xhr.onerror=()=>reject({error:"Network error during upload"});
+    xhr.send(fd);
+  });
+}
+
 async function savePost(editId,action){
   const err=document.getElementById("err");err.innerHTML="";
-  const payload={title:document.getElementById("title").value,tags:document.getElementById("tags").value,body:document.getElementById("body").value,coverImage:document.getElementById("cover").value,action};
-  if(action==="schedule"){const s=document.getElementById("schedat").value;if(!s){err.innerHTML=`<div class="error">Pick a date/time to schedule.</div>`;return}payload.publishAt=new Date(s).toISOString()}
+  const title=document.getElementById("title").value;
+  const body=document.getElementById("body").value;
+  if(!title.trim()||!body.trim()){err.innerHTML=errorBlock("Title and body can't be empty.");return}
+  const payload={title,tags:document.getElementById("tags").value,body,coverImage:pendingCoverUrl,action};
+  if(action==="schedule"){
+    const s=document.getElementById("schedat").value;
+    if(!s){err.innerHTML=errorBlock("Pick a date/time to schedule.");return}
+    payload.publishAt=new Date(s).toISOString();
+  }
+  const btnId=action==="publish"?"publishBtn":action==="schedule"?"scheduleBtn":"draftBtn";
+  const btn=document.getElementById(btnId);
+  const allBtns=["publishBtn","scheduleBtn","draftBtn"].map(id=>document.getElementById(id));
+  allBtns.forEach(b=>b.disabled=true);
+  const original=btn.innerHTML;
+  btn.innerHTML=`<span class="spin"></span> Saving…`;
   try{
     if(editId)await api("/admin/posts/"+editId,{method:"PUT",body:JSON.stringify(payload)});
     else await api("/admin/posts",{method:"POST",body:JSON.stringify(payload)});
+    showToast(action==="draft"?"Draft saved":action==="schedule"?"Post scheduled":"Published");
     go("/admin");
-  }catch(e){err.innerHTML=`<div class="error">${esc(e.error||"Could not save")}</div>`}
+  }catch(e){
+    err.innerHTML=errorBlock(e.error||"Could not save this post.");
+    allBtns.forEach(b=>b.disabled=false);
+    btn.innerHTML=original;
+  }
 }
 
-// ---- router ----
 function route(){
   const path=location.pathname,params=new URLSearchParams(location.search);
   if(path==="/")return viewList(params.get("q"));
-  if(path.startsWith("/p/"))return viewPost(path.slice(3));
+  if(path.startsWith("/p/"))return viewPost(decodeURIComponent(path.slice(3)));
   if(path.startsWith("/tag/"))return viewTag(decodeURIComponent(path.slice(5)));
   if(path==="/login")return viewLogin();
   if(path==="/admin")return viewAdmin();
   if(path==="/write")return viewEditor(null);
   if(path.startsWith("/edit/"))return viewEditor(Number(path.slice(6)));
-  return viewList();
+  app.innerHTML=`<div class="empty"><div class="empty-icon">?</div>page not found<button class="btn ghost small" onclick="go('/')">Back home</button></div>`;
 }
 (async function(){await refreshMe();route()})();
 </script>

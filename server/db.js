@@ -88,7 +88,23 @@ export async function adminStats() {
        COALESCE(sum(views), 0)::int AS total_views
      FROM posts`
   );
-  return rows[0];
+  const { rows: commentRows } = await pool.query(`SELECT COUNT(*)::int AS count FROM comments`);
+  const subs = await subscriberCount();
+  return { ...rows[0], total_comments: commentRows[0].count, total_subscribers: subs };
+}
+
+// Top posts by views, for the admin "what's popular" panel.
+export async function topPosts(limit = 5) {
+  const { rows } = await pool.query(
+    `SELECT id, title, slug, views,
+            (SELECT COUNT(*) FROM comments c WHERE c.post_id = posts.id)::int AS comment_count
+       FROM posts
+      WHERE status = 'published'
+      ORDER BY views DESC
+      LIMIT $1`,
+    [limit]
+  );
+  return rows.map((r) => ({ id: r.id, title: r.title, slug: r.slug, views: r.views, commentCount: r.comment_count }));
 }
 
 // --- Single post -----------------------------------------------------------
@@ -189,6 +205,117 @@ export async function createUser({ username, passwordHash }) {
   } catch {
     return null;
   }
+}
+
+// --- Comments ----------------------------------------------------------
+
+export async function listComments(postId) {
+  const { rows } = await pool.query(
+    `SELECT id, author, body, rating, created_at
+       FROM comments
+      WHERE post_id = $1 AND approved = TRUE
+      ORDER BY created_at ASC`,
+    [postId]
+  );
+  return rows.map((r) => ({
+    id: r.id,
+    author: r.author,
+    body: r.body,
+    rating: r.rating,
+    createdAt: new Date(r.created_at).getTime(),
+  }));
+}
+
+export async function createComment({ postId, author, email, body, rating }) {
+  const { rows } = await pool.query(
+    `INSERT INTO comments (post_id, author, email, body, rating)
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING id, author, body, rating, created_at`,
+    [postId, author, email || null, body, rating || null]
+  );
+  const r = rows[0];
+  return { id: r.id, author: r.author, body: r.body, rating: r.rating, createdAt: new Date(r.created_at).getTime() };
+}
+
+export async function deleteComment(id) {
+  const { rowCount } = await pool.query(`DELETE FROM comments WHERE id = $1`, [id]);
+  return rowCount > 0;
+}
+
+// Average rating + count, used on the post page and admin dashboard.
+export async function ratingSummary(postId) {
+  const { rows } = await pool.query(
+    `SELECT COUNT(rating)::int AS count, COALESCE(AVG(rating), 0)::float AS average
+       FROM comments WHERE post_id = $1 AND rating IS NOT NULL AND approved = TRUE`,
+    [postId]
+  );
+  return { count: rows[0].count, average: Math.round(rows[0].average * 10) / 10 };
+}
+
+// --- Reactions ---------------------------------------------------------
+
+// Counts per emoji for a post, e.g. { "👍": 4, "🔥": 1 }.
+export async function reactionCounts(postId) {
+  const { rows } = await pool.query(
+    `SELECT emoji, COUNT(*)::int AS count FROM reactions WHERE post_id = $1 GROUP BY emoji`,
+    [postId]
+  );
+  return Object.fromEntries(rows.map((r) => [r.emoji, r.count]));
+}
+
+// Which emoji(s) this visitor already picked for this post (so the UI can
+// show them as already-selected instead of letting the same browser stack
+// up infinite reactions).
+export async function visitorReactions(postId, visitorId) {
+  const { rows } = await pool.query(
+    `SELECT emoji FROM reactions WHERE post_id = $1 AND visitor_id = $2`,
+    [postId, visitorId]
+  );
+  return rows.map((r) => r.emoji);
+}
+
+// Toggle: if this visitor already reacted with this emoji, remove it;
+// otherwise add it. Returns the new state (added: true/false) plus fresh
+// counts so the caller can update the UI in one round trip.
+export async function toggleReaction(postId, visitorId, emoji) {
+  const { rowCount } = await pool.query(
+    `DELETE FROM reactions WHERE post_id = $1 AND visitor_id = $2 AND emoji = $3`,
+    [postId, visitorId, emoji]
+  );
+  let added = false;
+  if (rowCount === 0) {
+    await pool.query(
+      `INSERT INTO reactions (post_id, visitor_id, emoji) VALUES ($1, $2, $3)
+       ON CONFLICT DO NOTHING`,
+      [postId, visitorId, emoji]
+    );
+    added = true;
+  }
+  return { added, counts: await reactionCounts(postId) };
+}
+
+// --- Newsletter subscribers ---------------------------------------------
+
+export async function addSubscriber(email) {
+  try {
+    await pool.query(
+      `INSERT INTO subscribers (email) VALUES ($1) ON CONFLICT (email) DO NOTHING`,
+      [email]
+    );
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function subscriberCount() {
+  const { rows } = await pool.query(`SELECT COUNT(*)::int AS count FROM subscribers`);
+  return rows[0].count;
+}
+
+export async function listSubscribers() {
+  const { rows } = await pool.query(`SELECT email, created_at FROM subscribers ORDER BY created_at DESC`);
+  return rows.map((r) => ({ email: r.email, createdAt: new Date(r.created_at).getTime() }));
 }
 
 // --- helpers ---------------------------------------------------------------
