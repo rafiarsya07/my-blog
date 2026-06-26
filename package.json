@@ -1,0 +1,22 @@
+{
+  "name": "thoughtlog",
+  "version": "1.0.0",
+  "description": "A full-stack personal blog with a writing CMS, full-text search, and view tracking",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "init-db": "node server/init-db.js",
+    "seed": "node server/seed.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "marked": "^14.1.4",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.13.1",
+    "sharp": "^0.33.5"
+  }
+}
